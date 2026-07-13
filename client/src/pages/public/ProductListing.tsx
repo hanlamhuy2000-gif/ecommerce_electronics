@@ -20,6 +20,7 @@ export function ProductListing() {
   const [selectedRating, setSelectedRating] = useState<number | null>(null);
   const [sortBy, setSortBy] = useState("popular");
   const [currentPage, setCurrentPage] = useState(1);
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
   const PAGE_SIZE = 12;
 
@@ -66,6 +67,7 @@ export function ProductListing() {
   }, [selectedCategory, priceMin, priceMax, selectedRating, sortBy]);
 
   const handleCategoryClick = (catId: string) => {
+    setMobileFiltersOpen(false);
     if (catId === selectedCategory) {
       // Bỏ chọn → hiện tất cả
       navigate("/products");
@@ -79,6 +81,7 @@ export function ProductListing() {
     setPriceMax("");
     setSelectedRating(null);
     setSortBy("popular");
+    setMobileFiltersOpen(false);
     navigate("/products");
   };
 
@@ -102,10 +105,29 @@ export function ProductListing() {
           </span>
         </div>
 
-        <div className="flex gap-8">
+        <div className="flex flex-col gap-6 md:flex-row md:gap-8">
           {/* Sidebar Filters */}
-          <div className="flex-shrink-0 w-64">
-            <div className="sticky p-6 bg-white shadow-sm rounded-xl top-24">
+          <aside className="w-full md:w-64 md:flex-shrink-0">
+            <button
+              type="button"
+              onClick={() => setMobileFiltersOpen((open) => !open)}
+              className="flex w-full items-center justify-between rounded-xl bg-white p-4 text-left shadow-sm md:hidden"
+              aria-expanded={mobileFiltersOpen}
+              aria-controls="product-filters"
+            >
+              <span className="flex items-center gap-2 font-semibold text-gray-900">
+                <SlidersHorizontalIcon className="h-5 w-5 text-indigo-600" />
+                Bộ lọc
+              </span>
+              <span className="text-sm font-medium text-indigo-600">
+                {mobileFiltersOpen ? "Ẩn" : "Hiện"}
+              </span>
+            </button>
+
+            <div
+              id="product-filters"
+              className={`${mobileFiltersOpen ? "block" : "hidden"} mt-3 rounded-xl bg-white p-5 shadow-sm md:sticky md:top-24 md:mt-0 md:block md:p-6`}
+            >
               <div className="flex items-center justify-between mb-6">
                 <h3 className="font-semibold text-gray-900">Bộ lọc</h3>
                 <button
@@ -126,7 +148,7 @@ export function ProductListing() {
                     placeholder="Min"
                     value={priceMin}
                     onChange={(e) => setPriceMin(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm"
+                    className="min-w-0 flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm"
                   />
                   <span className="text-gray-400">-</span>
                   <input
@@ -134,7 +156,7 @@ export function ProductListing() {
                     placeholder="Max"
                     value={priceMax}
                     onChange={(e) => setPriceMax(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm"
+                    className="min-w-0 flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm"
                   />
                 </div>
               </div>
@@ -145,7 +167,10 @@ export function ProductListing() {
                 <div className="space-y-1">
                   {/* Tất cả sản phẩm */}
                   <button
-                    onClick={() => navigate("/products")}
+                    onClick={() => {
+                      setMobileFiltersOpen(false);
+                      navigate("/products");
+                    }}
                     className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${
                       !selectedCategory
                         ? "bg-indigo-50 text-indigo-700 font-semibold"
@@ -190,24 +215,24 @@ export function ProductListing() {
                 </div>
               </div>
             </div>
-          </div>
+          </aside>
 
           {/* Main Content */}
-          <div className="flex-1">
+          <div className="min-w-0 flex-1">
             {/* Sort Bar */}
-            <div className="flex items-center justify-between p-4 mb-6 bg-white shadow-sm rounded-xl">
-              <p className="text-gray-600 text-sm">
+            <div className="mb-6 flex flex-col gap-3 rounded-xl bg-white p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between">
+              <p className="min-w-0 text-sm text-gray-600">
                 {selectedCategoryName ? (
                   <>Danh mục: <span className="font-semibold text-indigo-700">{selectedCategoryName}</span> — </>
                 ) : null}
                 Hiển thị <span className="font-semibold text-gray-900">{paginatedProducts.length}</span> / <span className="font-semibold text-gray-900">{products.length}</span> sản phẩm
               </p>
-              <div className="flex items-center space-x-3">
-                <SlidersHorizontalIcon className="w-5 h-5 text-gray-400" />
+              <div className="flex w-full min-w-0 items-center gap-2 sm:w-auto sm:gap-3">
+                <SlidersHorizontalIcon className="h-5 w-5 flex-shrink-0 text-gray-400" />
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
-                  className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm"
+                  className="min-w-0 flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:flex-none sm:px-4"
                 >
                   <option value="popular">Phổ biến nhất</option>
                   <option value="price-low">Giá: Thấp → Cao</option>
@@ -240,7 +265,7 @@ export function ProductListing() {
                     />
                   ))
                 ) : (
-                  <div className="col-span-3 py-16 text-center">
+                  <div className="col-span-full py-16 text-center">
                     <p className="text-gray-400 text-lg mb-2">Không tìm thấy sản phẩm nào.</p>
                     <button
                       onClick={handleClearAll}
@@ -255,7 +280,7 @@ export function ProductListing() {
 
             {/* Pagination */}
             {totalPages > 1 && (
-              <div className="flex items-center justify-center space-x-2 mt-4">
+              <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
                 <button
                   onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                   disabled={currentPage === 1}

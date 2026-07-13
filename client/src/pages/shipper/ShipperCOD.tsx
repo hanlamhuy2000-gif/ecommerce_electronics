@@ -171,7 +171,7 @@ export function ShipperCOD() {
 
       {/* Tabs */}
       <div className="bg-white border border-gray-200 rounded-t-xl overflow-hidden">
-        <div className="flex overflow-x-auto border-b border-gray-200 scrollbar-hide">
+        <div className="flex overflow-x-auto overscroll-x-contain touch-pan-x [-webkit-overflow-scrolling:touch] border-b border-gray-200 scrollbar-hide">
           {tabs.map((tab) =>
           <button
             key={tab.id}
@@ -192,8 +192,8 @@ export function ShipperCOD() {
 
       {/* Orders Table */}
       <div className="bg-white border-x border-b border-gray-200 rounded-b-xl overflow-hidden shadow-sm">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+        <div className="-mx-4 overflow-x-auto overscroll-x-contain touch-pan-x [-webkit-overflow-scrolling:touch] px-4 sm:mx-0 sm:px-0">
+          <table className="w-full min-w-[900px] text-left border-collapse">
             <thead>
               <tr className="bg-gray-50 border-b border-gray-200">
                 {activeTab === 'pending_remittance' &&

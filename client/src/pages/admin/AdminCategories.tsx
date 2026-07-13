@@ -261,8 +261,8 @@ export function AdminCategories() {
               )}
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full min-w-[760px] text-left">
+            <div className="-mx-4 overflow-x-auto overscroll-x-contain touch-pan-x [-webkit-overflow-scrolling:touch] px-4 sm:mx-0 sm:px-0">
+              <table className="w-full min-w-[900px] text-left">
                 <thead className="border-b border-gray-200 bg-gray-50">
                   <tr>
                     <th className="w-24 px-5 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500">

@@ -211,8 +211,8 @@ export function SellerPromotions() {
 
       {/* Table */}
       <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+        <div className="-mx-4 overflow-x-auto overscroll-x-contain touch-pan-x [-webkit-overflow-scrolling:touch] px-4 sm:mx-0 sm:px-0">
+          <table className="w-full min-w-[900px] text-left border-collapse">
             <thead>
               <tr className="bg-gray-50 border-b border-gray-200">
                 {['Mã', 'Loại giảm', 'Đơn tối thiểu', 'Lượt dùng', 'Thời gian', 'Trạng thái', ''].map(h => (

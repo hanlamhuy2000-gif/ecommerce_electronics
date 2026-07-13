@@ -119,7 +119,7 @@ export function AdminOrders() {
 
       {/* Tabs */}
       <div className="bg-white border border-gray-200 rounded-t-xl overflow-hidden">
-        <div className="flex overflow-x-auto border-b border-gray-200 scrollbar-hide">
+        <div className="flex overflow-x-auto overscroll-x-contain touch-pan-x [-webkit-overflow-scrolling:touch] border-b border-gray-200 scrollbar-hide">
           {tabs.map((tab) => (
             <button
               key={tab.id}
@@ -137,8 +137,8 @@ export function AdminOrders() {
 
       {/* Orders Table */}
       <div className="bg-white border-x border-b border-gray-200 rounded-b-xl overflow-hidden shadow-sm">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+        <div className="-mx-4 overflow-x-auto overscroll-x-contain touch-pan-x [-webkit-overflow-scrolling:touch] px-4 sm:mx-0 sm:px-0">
+          <table className="w-full min-w-[900px] text-left border-collapse">
             <thead>
               <tr className="bg-gray-50 border-b border-gray-200">
                 <th className="p-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">
@@ -203,7 +203,7 @@ export function AdminOrders() {
                       <StatusBadge status={order.orderStatus as any} />
                     </td>
                     <td className="p-4 text-right">
-                      <div className="flex items-center justify-end space-x-2">
+                      <div className="flex flex-wrap items-center justify-end gap-2">
                         <button
                           onClick={() => setSelectedOrderDetails(order)}
                           className="p-1.5 text-gray-400 hover:text-indigo-600 rounded-lg hover:bg-indigo-50 transition-colors opacity-0 group-hover:opacity-100"
@@ -228,7 +228,7 @@ export function AdminOrders() {
 
         {/* Pagination */}
         {filteredOrders.length > 0 && (
-          <div className="px-4 py-3 border-t border-gray-200 flex items-center justify-between bg-gray-50">
+          <div className="flex flex-col gap-3 border-t border-gray-200 bg-gray-50 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-sm text-gray-500">
               Hiển thị từ{" "}
               <span className="font-medium text-gray-900">
@@ -244,7 +244,7 @@ export function AdminOrders() {
               </span>{" "}
               kết quả
             </p>
-            <div className="flex space-x-2">
+            <div className="flex flex-wrap justify-center gap-2 sm:justify-end">
               <button
                 onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
                 disabled={currentPage === 1}

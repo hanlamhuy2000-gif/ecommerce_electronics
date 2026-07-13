@@ -112,82 +112,86 @@ export function Cart() {
     <div className="min-h-screen bg-slate-50">
       <Navbar />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">
+      <div className="max-w-7xl mx-auto px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+        <h1 className="mb-6 text-2xl font-bold text-gray-900 sm:mb-8 sm:text-3xl">
           Giỏ hàng ({cartItems.length} sản phẩm)
         </h1>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 lg:gap-8">
           {/* Cart Items */}
           <div className="lg:col-span-2 space-y-3">
             <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
               {cartItems.map((item, idx) => (
                 <div
                   key={`${item.id}-${item.color}-${item.size}`}
-                  className={`flex items-center gap-4 p-5 ${idx < cartItems.length - 1 ? 'border-b border-gray-100' : ''} hover:bg-slate-50 transition-colors`}
+                  className={`flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:gap-4 sm:p-5 ${idx < cartItems.length - 1 ? 'border-b border-gray-100' : ''} hover:bg-slate-50 transition-colors`}
                 >
-                  {/* Image */}
-                  <Link to={`/product/${item.id}`} className="shrink-0">
-                    <img
-                      src={item.image}
-                      alt={item.name}
-                      className="w-20 h-20 object-cover rounded-xl border border-gray-100"
-                    />
-                  </Link>
-
-                  {/* Info */}
-                  <div className="flex-1 min-w-0">
-                    <Link to={`/product/${item.id}`}>
-                      <h3 className="font-semibold text-gray-900 hover:text-indigo-600 transition-colors line-clamp-1">
-                        {item.name}
-                      </h3>
+                  <div className="flex min-w-0 gap-3 sm:flex-1 sm:items-center sm:gap-4">
+                    {/* Image */}
+                    <Link to={`/product/${item.id}`} className="shrink-0">
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        className="h-16 w-16 object-cover rounded-xl border border-gray-100 sm:h-20 sm:w-20"
+                      />
                     </Link>
-                    {(item.color || item.size) && (
-                      <p className="text-sm text-gray-400 mt-0.5">
-                        {[item.color !== 'Mặc định' ? item.color : null]
-                          .filter(Boolean)
-                          .join(' • ')}
+
+                    {/* Info */}
+                    <div className="min-w-0 flex-1">
+                      <Link to={`/product/${item.id}`}>
+                        <h3 className="line-clamp-2 break-words font-semibold text-gray-900 transition-colors hover:text-indigo-600 sm:line-clamp-1">
+                          {item.name}
+                        </h3>
+                      </Link>
+                      {(item.color || item.size) && (
+                        <p className="mt-0.5 text-sm text-gray-400">
+                          {[item.color !== 'M\u1eb7c \u0111\u1ecbnh' ? item.color : null]
+                            .filter(Boolean)
+                            .join(' \u2022 ')}
+                        </p>
+                      )}
+                      <p className="mt-1 whitespace-nowrap text-sm font-medium text-indigo-600">
+                        {formatVND(item.price)} / sp
                       </p>
-                    )}
-                    <p className="text-sm font-medium text-indigo-600 mt-1">
-                      {formatVND(item.price)} / sp
-                    </p>
+                    </div>
                   </div>
 
-                  {/* Quantity */}
-                  <div className="flex items-center gap-2 bg-gray-100 rounded-xl p-1 shrink-0">
+                  <div className="flex items-center justify-between gap-3 pl-[76px] sm:contents">
+                    {/* Quantity */}
+                    <div className="flex shrink-0 items-center gap-2 rounded-xl bg-gray-100 p-1">
+                      <button
+                        onClick={() => updateQuantity(item.id, -1, item.color, item.size)}
+                        className="p-1.5 text-gray-500 hover:text-indigo-600 hover:bg-white rounded-lg transition-all"
+                      >
+                        <MinusIcon className="w-3.5 h-3.5" />
+                      </button>
+                      <span className="w-8 font-bold text-center text-gray-900 text-sm">
+                        {item.quantity}
+                      </span>
+                      <button
+                        onClick={() => updateQuantity(item.id, 1, item.color, item.size)}
+                        className="p-1.5 text-gray-500 hover:text-indigo-600 hover:bg-white rounded-lg transition-all"
+                      >
+                        <PlusIcon className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+
+                    {/* Line total */}
+                    <div className="shrink-0 text-right sm:min-w-[100px]">
+                      <p className="whitespace-nowrap font-bold text-gray-900">
+                        {formatVND(item.price * item.quantity)}
+                      </p>
+                    </div>
+
+                    {/* Remove */}
                     <button
-                      onClick={() => updateQuantity(item.id, -1, item.color, item.size)}
-                      className="p-1.5 text-gray-500 hover:text-indigo-600 hover:bg-white rounded-lg transition-all"
+                      onClick={() => removeItem(item.id, item.color, item.size)}
+                      className="shrink-0 rounded-lg p-2 text-gray-300 transition-colors hover:bg-red-50 hover:text-red-500"
+                      title="Xoa"
                     >
-                      <MinusIcon className="w-3.5 h-3.5" />
-                    </button>
-                    <span className="w-8 font-bold text-center text-gray-900 text-sm">
-                      {item.quantity}
-                    </span>
-                    <button
-                      onClick={() => updateQuantity(item.id, 1, item.color, item.size)}
-                      className="p-1.5 text-gray-500 hover:text-indigo-600 hover:bg-white rounded-lg transition-all"
-                    >
-                      <PlusIcon className="w-3.5 h-3.5" />
+                      <Trash2Icon className="w-4 h-4" />
                     </button>
                   </div>
-
-                  {/* Line total */}
-                  <div className="text-right shrink-0 min-w-[100px]">
-                    <p className="font-bold text-gray-900">
-                      {formatVND(item.price * item.quantity)}
-                    </p>
-                  </div>
-
-                  {/* Remove */}
-                  <button
-                    onClick={() => removeItem(item.id, item.color, item.size)}
-                    className="p-2 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors shrink-0"
-                    title="Xóa"
-                  >
-                    <Trash2Icon className="w-4 h-4" />
-                  </button>
                 </div>
               ))}
             </div>
@@ -195,9 +199,9 @@ export function Cart() {
             {/* Free ship progress */}
             {!freeShipping && subtotal < FREE_SHIP_THRESHOLD && (
               <div className="bg-white rounded-xl p-4 shadow-sm">
-                <div className="flex justify-between text-sm text-gray-600 mb-1.5">
+                <div className="mb-1.5 flex flex-col gap-1 text-sm text-gray-600 sm:flex-row sm:justify-between">
                   <span>🚚 Mua thêm để được <span className="font-semibold text-indigo-600">miễn phí vận chuyển</span></span>
-                  <span className="font-semibold">{formatVND(FREE_SHIP_THRESHOLD - subtotal)}</span>
+                  <span className="shrink-0 whitespace-nowrap font-semibold">{formatVND(FREE_SHIP_THRESHOLD - subtotal)}</span>
                 </div>
                 <div className="bg-gray-200 rounded-full h-2">
                   <div
@@ -211,7 +215,7 @@ export function Cart() {
 
           {/* Order Summary */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-2xl shadow-sm p-6 sticky top-24">
+            <div className="bg-white rounded-2xl shadow-sm p-5 sm:p-6 lg:sticky lg:top-24">
               <h2 className="text-xl font-bold text-gray-900 mb-6">Tóm tắt đơn hàng</h2>
 
               {/* Coupon */}
@@ -240,12 +244,12 @@ export function Cart() {
                       onChange={e => setPromoCode(e.target.value.toUpperCase())}
                       onKeyDown={e => e.key === 'Enter' && handleApplyCoupon()}
                       placeholder="Nhập mã giảm giá"
-                      className="flex-1 px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 font-mono uppercase"
+                      className="min-w-0 flex-1 px-3 py-2.5 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 font-mono uppercase sm:px-4"
                     />
                     <button
                       onClick={handleApplyCoupon}
                       disabled={couponLoading || !promoCode.trim()}
-                      className="bg-gray-900 text-white px-4 py-2.5 rounded-xl hover:bg-gray-800 transition-colors flex items-center gap-1.5 text-sm font-medium disabled:opacity-50"
+                      className="shrink-0 bg-gray-900 text-white px-3 py-2.5 rounded-xl hover:bg-gray-800 transition-colors flex items-center gap-1.5 text-sm font-medium disabled:opacity-50 sm:px-4"
                     >
                       {couponLoading ? (
                         <Loader2Icon className="h-4 w-4 animate-spin" />
@@ -270,31 +274,31 @@ export function Cart() {
               <div className="space-y-3 mb-5 pb-5 border-b border-gray-100">
                 <div className="flex justify-between text-gray-600 text-sm">
                   <span>Tạm tính ({cartItems.length} sp)</span>
-                  <span>{formatVND(subtotal)}</span>
+                  <span className="whitespace-nowrap">{formatVND(subtotal)}</span>
                 </div>
                 <div className="flex justify-between text-gray-600 text-sm">
                   <span>Phí vận chuyển</span>
-                  <span className={shipping === 0 ? 'text-green-600 font-semibold' : ''}>
+                  <span className={`${shipping === 0 ? 'text-green-600 font-semibold' : ''} whitespace-nowrap`}>
                     {shipping === 0 ? 'Miễn phí' : formatVND(shipping)}
                   </span>
                 </div>
                 {discountAmount > 0 && (
                   <div className="flex justify-between text-green-600 text-sm">
                     <span>Giảm giá ({coupon?.code})</span>
-                    <span>-{formatVND(discountAmount)}</span>
+                    <span className="whitespace-nowrap">-{formatVND(discountAmount)}</span>
                   </div>
                 )}
                 {freeShipping && !discountAmount && (
                   <div className="flex justify-between text-green-600 text-sm">
                     <span>Miễn phí ship ({coupon?.code})</span>
-                    <span>-{formatVND(SHIPPING_FEE)}</span>
+                    <span className="whitespace-nowrap">-{formatVND(SHIPPING_FEE)}</span>
                   </div>
                 )}
               </div>
 
-              <div className="flex justify-between font-bold text-gray-900 text-xl mb-6">
+              <div className="mb-6 flex flex-wrap items-baseline justify-between gap-2 font-bold text-gray-900 text-xl">
                 <span>Tổng cộng</span>
-                <span className="text-red-600">{formatVND(total)}</span>
+                <span className="whitespace-nowrap text-red-600">{formatVND(total)}</span>
               </div>
 
               <Link

@@ -80,6 +80,7 @@ export function Chat() {
   const [searchQuery, setSearchQuery] = useState("");
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [isMobileChatOpen, setIsMobileChatOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
@@ -185,6 +186,12 @@ export function Chat() {
   }, [token, contactIdFromUrl]);
 
   useEffect(() => {
+    if (isDashboard && contactIdFromUrl && selectedContact) {
+      setIsMobileChatOpen(true);
+    }
+  }, [isDashboard, contactIdFromUrl, selectedContact]);
+
+  useEffect(() => {
     let interval: any;
     if (selectedContact && token) {
       fetchMessages(selectedContact._id);
@@ -254,11 +261,11 @@ export function Chat() {
   );
 
   const chatContent = (
-    <div className="bg-white rounded-[2rem] shadow-xl shadow-indigo-100/20 overflow-hidden border border-indigo-50 flex h-[700px] max-h-[80vh]">
+    <div className="flex h-[calc(100dvh-9rem)] min-h-[560px] w-full min-w-0 overflow-hidden rounded-2xl border border-indigo-50 bg-white shadow-xl shadow-indigo-100/20 sm:h-[700px] sm:max-h-[80vh] sm:rounded-[2rem]">
         {/* Inbox List */}
         {isDashboard && (
-          <div className="w-80 border-r border-indigo-50 flex flex-col bg-white">
-            <div className="p-8 border-b border-indigo-50">
+          <div className={`${isMobileChatOpen ? "hidden" : "flex"} w-full min-w-0 flex-col border-r border-indigo-50 bg-white md:flex md:w-80 md:shrink-0`}>
+            <div className="border-b border-indigo-50 p-5 sm:p-8">
               <h3 className="text-xl font-black text-gray-900 mb-6">Trò chuyện</h3>
               <div className="relative">
                 <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
@@ -272,7 +279,7 @@ export function Chat() {
               </div>
             </div>
             
-            <div className="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar">
+            <div className="flex-1 space-y-3 overflow-y-auto p-4 custom-scrollbar">
               {loading ? (
                 <div className="flex flex-col items-center justify-center h-full text-indigo-200">
                   <div className="animate-pulse bg-indigo-50 h-10 w-full rounded-2xl mb-2"></div>
@@ -287,8 +294,11 @@ export function Chat() {
               ) : filteredContacts.map(c => (
                 <button
                   key={c._id}
-                  onClick={() => setSelectedContact(c)}
-                  className={`w-full flex items-center space-x-4 p-4 rounded-[1.25rem] transition-all duration-300 transform ${
+                  onClick={() => {
+                    setSelectedContact(c);
+                    setIsMobileChatOpen(true);
+                  }}
+                  className={`w-full flex items-center gap-4 p-4 rounded-[1.25rem] transition-all duration-300 transform ${
                     selectedContact?._id === c._id 
                     ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-100 scale-[1.02]' 
                     : 'hover:bg-indigo-50 text-gray-600 hover:text-indigo-600 active:scale-95'
@@ -316,55 +326,65 @@ export function Chat() {
         )}
 
         {/* Chat View */}
-        <div className="flex-1 flex flex-col bg-gray-50/30">
+        <div className={`${isMobileChatOpen || !isDashboard ? "flex" : "hidden"} min-w-0 flex-1 flex-col bg-gray-50/30 md:flex`}>
           {selectedContact ? (
             <>
               {/* Chat Header */}
-              <div className="px-8 py-6 bg-white border-b border-indigo-50 flex items-center justify-between shadow-sm">
-                <div className="flex items-center space-x-4">
+              <div className="flex items-center justify-between gap-3 border-b border-indigo-50 bg-white px-4 py-4 shadow-sm sm:px-8 sm:py-6">
+                <div className="flex min-w-0 flex-1 items-center gap-3 sm:gap-4">
+                  {isDashboard && (
+                    <button
+                      type="button"
+                      onClick={() => setIsMobileChatOpen(false)}
+                      className="shrink-0 rounded-xl border border-indigo-100 bg-white px-3 py-2 text-sm font-bold text-indigo-600 shadow-sm md:hidden"
+                    >
+                      Quay lại
+                    </button>
+                  )}
                   <div className="relative">
                     <img 
                        src={`https://ui-avatars.com/api/?name=${getContactDisplayName(selectedContact)}&background=6366f1&color=fff&bold=true`} 
-                      className="w-11 h-11 rounded-2xl border-2 border-indigo-50 shadow-sm" 
+                      className="h-10 w-10 rounded-2xl border-2 border-indigo-50 shadow-sm sm:h-11 sm:w-11"
                     />
                     <div className="absolute -top-1 -right-1 p-1 bg-green-500 rounded-lg animate-pulse border-2 border-white"></div>
                   </div>
-                  <div>
-                    <p className="font-black text-gray-900 tracking-tight">{getContactDisplayName(selectedContact)}</p>
+                  <div className="min-w-0">
+                    <p className="truncate font-black text-gray-900 tracking-tight">{getContactDisplayName(selectedContact)}</p>
                     <p className="text-[10px] text-green-600 font-black uppercase flex items-center">
                       <span className="w-1.5 h-1.5 bg-green-500 rounded-full mr-1.5"></span>
                       Đang Trực Tuyến
                     </p>
                   </div>
                 </div>
-                <button className="p-2.5 text-indigo-400 hover:text-indigo-600 bg-indigo-50/50 hover:bg-indigo-100 rounded-xl transition-all">
+                <button className="shrink-0 p-2.5 text-indigo-400 hover:text-indigo-600 bg-indigo-50/50 hover:bg-indigo-100 rounded-xl transition-all">
                   <ClockIcon className="h-5 w-5" />
                 </button>
               </div>
 
               {/* Pinned Order Card */}
               {pinnedOrder && (
-                <div className="px-8 py-4 bg-indigo-50/50 border-b border-indigo-100 flex items-center justify-between shadow-sm animate-in slide-in-from-top duration-300">
-                  <div className="flex items-center space-x-4">
-                    <div className="p-2 bg-indigo-100 rounded-xl">
+                <div className="flex flex-col gap-3 border-b border-indigo-100 bg-indigo-50/50 px-4 py-3 shadow-sm animate-in slide-in-from-top duration-300 sm:flex-row sm:items-center sm:justify-between sm:px-8 sm:py-4">
+                  <div className="flex min-w-0 flex-1 items-center gap-3 sm:gap-4">
+
+                    <div className="shrink-0 p-2 bg-indigo-100 rounded-xl">
                       <ShoppingBagIcon className="h-6 w-6 text-indigo-600" />
                     </div>
-                    <div>
-                      <div className="flex items-center space-x-2">
+                    <div className="min-w-0">
+                      <div className="flex min-w-0 items-center gap-2">
                         <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">Đơn hàng</span>
-                        <span className="font-mono text-sm font-bold text-indigo-700 bg-white px-2 py-0.5 rounded border border-indigo-100">
+                        <span className="truncate font-mono text-xs font-bold text-indigo-700 bg-white px-2 py-0.5 rounded border border-indigo-100 sm:text-sm">
                           #{pinnedOrder._id.slice(-8).toUpperCase()}
                         </span>
                       </div>
-                      <p className="text-xs text-gray-600 mt-1 font-semibold max-w-md truncate">
+                      <p className="mt-1 max-w-full truncate text-xs font-semibold text-gray-600 sm:max-w-md">
                         Sản phẩm: {pinnedOrder.products?.map((p: any) => `${p.product?.name} (x${p.quantity})`).join(", ")}
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-center space-x-4">
+                  <div className="flex shrink-0 items-center justify-between gap-3 sm:justify-end sm:gap-4">
                     <div className="text-right">
                       <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Tổng tiền</p>
-                      <p className="text-sm font-black text-red-600">
+                      <p className="whitespace-nowrap text-sm font-black text-red-600">
                         {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(pinnedOrder.totalAmount || 0)}
                       </p>
                     </div>
@@ -382,18 +402,18 @@ export function Chat() {
               {/* Messages Area */}
               <div 
                 ref={chatContainerRef}
-                className="flex-1 overflow-y-auto p-10 space-y-6 custom-scrollbar"
+                className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar sm:p-10 sm:space-y-6"
               >
                 {messages.length === 0 ? (
                   <div className="h-full flex flex-col items-center justify-center opacity-20 pointer-events-none">
-                    <UserIcon className="h-16 w-16 mb-4" />
-                    <p className="font-bold text-center">Bắt đầu cuộc trò chuyện với<br/>{getContactDisplayName(selectedContact)}</p>
+                    <UserIcon className="mb-4 h-14 w-14 sm:h-16 sm:w-16" />
+                    <p className="max-w-[220px] text-center text-sm font-bold sm:max-w-none sm:text-base">Bắt đầu cuộc trò chuyện với<br/>{getContactDisplayName(selectedContact)}</p>
                   </div>
                 ) : messages.map(m => {
                   const isMe = m.sender === user?.id || m.sender === (user as any)?._id;
                   return (
                     <div key={m._id} className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}>
-                      <div className={`max-w-[75%] px-6 py-4 rounded-3xl shadow-sm relative group overflow-hidden ${
+                      <div className={`relative group max-w-[86%] overflow-hidden rounded-3xl px-4 py-3 shadow-sm sm:max-w-[75%] sm:px-6 sm:py-4 ${
                         isMe 
                         ? 'bg-indigo-600 text-white rounded-tr-none shadow-lg shadow-indigo-100' 
                         : 'bg-white text-gray-900 rounded-tl-none border border-indigo-50 shadow-sm'
@@ -434,7 +454,7 @@ export function Chat() {
               </div>
 
               {/* Chat Input */}
-              <div className="p-8 bg-white border-t border-indigo-50 shadow-inner flex flex-col space-y-4">
+              <div className="flex flex-col space-y-3 border-t border-indigo-50 bg-white p-3 shadow-inner sm:space-y-4 sm:p-8">
                 {imagePreview && (
                   <div className="relative w-24 h-24 bg-gray-100 rounded-2xl overflow-hidden border border-indigo-100 shadow-sm group">
                     <img src={imagePreview} className="w-full h-full object-cover" />
@@ -449,7 +469,7 @@ export function Chat() {
                 )}
                 <form 
                   onSubmit={handleSendMessage} 
-                  className="flex items-center space-x-4 h-16"
+                  className="flex h-12 min-w-0 items-center gap-2 sm:h-16 sm:gap-4"
                 >
                   <input
                     type="file"
@@ -462,7 +482,7 @@ export function Chat() {
                     type="button"
                     disabled={uploadingImage}
                     onClick={() => fileInputRef.current?.click()}
-                    className="h-full px-4 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 border border-indigo-100 rounded-2xl font-bold transition-all flex items-center justify-center disabled:opacity-50"
+                    className="flex h-full shrink-0 items-center justify-center rounded-2xl border border-indigo-100 bg-indigo-50 px-4 font-bold text-indigo-600 transition-all hover:bg-indigo-100 disabled:opacity-50"
                     title="Đính kèm hình ảnh"
                   >
                     {uploadingImage ? (
@@ -472,21 +492,21 @@ export function Chat() {
                     )}
                   </button>
 
-                  <div className="flex-1 flex items-center bg-gray-50 border-2 border-transparent focus-within:border-indigo-100 focus-within:bg-white rounded-2xl px-6 h-full transition-all shadow-inner overflow-hidden">
+                  <div className="flex h-full min-w-0 flex-1 items-center overflow-hidden rounded-2xl border-2 border-transparent bg-gray-50 px-4 shadow-inner transition-all focus-within:border-indigo-100 focus-within:bg-white sm:px-6">
                     <input
                       type="text"
                       value={newMessage}
                       onChange={e => setNewMessage(e.target.value)}
                       placeholder="Viết tin nhắn cho người bán..."
-                      className="flex-1 bg-transparent border-none outline-none text-sm font-medium py-3"
+                      className="min-w-0 flex-1 bg-transparent border-none py-3 text-sm font-medium outline-none"
                     />
                   </div>
                   <button 
                     type="submit" 
                     disabled={!newMessage.trim() && !imagePreview}
-                    className="h-full px-8 bg-indigo-600 text-white rounded-2xl font-bold hover:bg-indigo-700 shadow-xl shadow-indigo-100 transition-all active:scale-95 disabled:opacity-50 flex items-center justify-center group"
+                    className="group flex h-full shrink-0 items-center justify-center rounded-2xl bg-indigo-600 px-4 font-bold text-white shadow-xl shadow-indigo-100 transition-all hover:bg-indigo-700 active:scale-95 disabled:opacity-50 sm:px-8"
                   >
-                    <span className="mr-2">Gửi đi</span>
+                    <span className="hidden sm:mr-2 sm:inline">Gửi đi</span>
                     <SendIcon className="h-5 w-5 transform group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                   </button>
                 </form>

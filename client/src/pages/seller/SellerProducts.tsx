@@ -132,7 +132,7 @@ export function SellerProducts() {
           <span className="text-sm font-medium text-indigo-800">
             Đã chọn {selectedProducts.length} sản phẩm
           </span>
-          <div className="flex space-x-2">
+          <div className="flex flex-wrap justify-center gap-2 sm:justify-end">
             {/* <button className="px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">
               Change Status
             </button> */}
@@ -145,8 +145,8 @@ export function SellerProducts() {
 
       {/* Products Table */}
       <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+        <div className="-mx-4 overflow-x-auto overscroll-x-contain touch-pan-x [-webkit-overflow-scrolling:touch] px-4 sm:mx-0 sm:px-0">
+          <table className="w-full min-w-[900px] text-left border-collapse">
             <thead>
               <tr className="bg-gray-50 border-b border-gray-200">
                 <th className="p-4 w-12">
@@ -260,13 +260,13 @@ export function SellerProducts() {
         </div>
 
         {/* Pagination */}
-        <div className="px-4 py-3 border-t border-gray-200 flex items-center justify-between bg-gray-50">
+        <div className="flex flex-col gap-3 border-t border-gray-200 bg-gray-50 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-sm text-gray-500">
             Hiển thị từ <span className="font-medium text-gray-900">{totalItems === 0 ? 0 : startIndex + 1}</span> đến{' '}
             <span className="font-medium text-gray-900">{Math.min(startIndex + ITEMS_PER_PAGE, totalItems)}</span> trên{' '}
             <span className="font-medium text-gray-900">{totalItems}</span> kết quả
           </p>
-          <div className="flex space-x-2">
+          <div className="flex flex-wrap justify-center gap-2 sm:justify-end">
             <button
               onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
               disabled={currentPage === 1}

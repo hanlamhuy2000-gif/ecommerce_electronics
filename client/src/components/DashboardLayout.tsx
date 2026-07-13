@@ -31,7 +31,10 @@ export function DashboardLayout({
   role,
   children,
 }: DashboardLayoutProps) {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
+    if (typeof window === "undefined") return true;
+    return window.innerWidth >= 1024;
+  });
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [notifications, setNotifications] = useState<{
@@ -69,6 +72,12 @@ export function DashboardLayout({
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  useEffect(() => {
+    if (window.innerWidth < 1024) {
+      setIsSidebarOpen(false);
+    }
+  }, [location.pathname]);
 
   useEffect(() => {
     const checkRoles = ["Admin", "Seller", "Warehouse"];
@@ -112,10 +121,10 @@ export function DashboardLayout({
     return `${days} ngày trước`;
   };
   return (
-    <div className="min-h-screen bg-slate-50 flex">
+    <div className="min-h-screen bg-slate-50 flex overflow-x-hidden">
       {/* Sidebar */}
       <aside
-        className={`bg-white border-r border-gray-200 transition-all duration-300 flex flex-col ${isSidebarOpen ? "w-64" : "w-20"} fixed h-full z-[60]`}
+        className={`fixed inset-y-0 left-0 z-[60] flex h-full flex-col border-r border-gray-200 bg-white transition-all duration-300 ${isSidebarOpen ? "w-64 translate-x-0" : "w-64 -translate-x-full lg:w-20 lg:translate-x-0"}`}
       >
         <div className="h-16 flex items-center justify-between px-4 border-b border-gray-200">
           <Link
@@ -205,13 +214,22 @@ export function DashboardLayout({
         </div>
       </aside>
 
+      {isSidebarOpen && (
+        <button
+          type="button"
+          aria-label="Dong menu"
+          onClick={() => setIsSidebarOpen(false)}
+          className="fixed inset-0 z-[55] bg-slate-900/40 lg:hidden"
+        />
+      )}
+
       {/* Main Content */}
       <main
-        className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ${isSidebarOpen ? "ml-64" : "ml-20"}`}
+        className={`flex min-w-0 flex-1 flex-col transition-all duration-300 w-full ${isSidebarOpen ? "lg:ml-64" : "lg:ml-20"}`}
       >
         {/* Top Header */}
-        <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-4 sm:px-6 lg:px-8 sticky top-0 z-[50]">
-          <div className="flex items-center">
+        <header className="sticky top-0 z-[50] flex h-16 items-center justify-between gap-3 border-b border-gray-200 bg-white px-4 sm:px-6 lg:px-8">
+          <div className="flex min-w-0 items-center">
             <button
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
               className="text-gray-500 hover:text-gray-700 focus:outline-none mr-4 hidden lg:block"
@@ -224,10 +242,10 @@ export function DashboardLayout({
             >
               <MenuIcon className="h-6 w-6" />
             </button>
-            <h1 className="text-xl font-semibold text-gray-900">{title}</h1>
+            <h1 className="truncate text-lg font-semibold text-gray-900 sm:text-xl">{title}</h1>
           </div>
 
-          <div className="flex items-center space-x-4">
+          <div className="flex shrink-0 items-center space-x-2 sm:space-x-4">
             {/* <div className="relative hidden md:block">
               <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
               <input
@@ -262,7 +280,7 @@ export function DashboardLayout({
                 </button>
 
                 {isNotificationsOpen && (
-                  <div className="absolute right-0 mt-2 w-80 bg-white rounded-2xl shadow-xl border border-gray-100 z-[55] overflow-hidden">
+                  <div className="absolute right-0 z-[55] mt-2 w-[calc(100vw-2rem)] max-w-80 overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-xl">
                     <div className="p-4 border-b border-gray-100 flex items-center justify-between bg-slate-50/50">
                       <h3 className="font-semibold text-gray-900 text-sm">Thông báo</h3>
                       {badgeCount > 0 && (
@@ -405,7 +423,7 @@ export function DashboardLayout({
         </header>
 
         {/* Page Content */}
-        <div className="flex-1 p-4 sm:p-6 lg:p-8 overflow-auto">{children}</div>
+        <div className="min-w-0 flex-1 overflow-auto p-4 sm:p-6 lg:p-8">{children}</div>
       </main>
     </div>
   );

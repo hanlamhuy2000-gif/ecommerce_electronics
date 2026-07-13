@@ -723,7 +723,7 @@ export function SellerOrders() {
 
       {/* Tabs */}
       <div className="bg-white border border-gray-200 rounded-t-xl overflow-hidden">
-        <div className="flex overflow-x-auto border-b border-gray-200 scrollbar-hide">
+        <div className="flex overflow-x-auto overscroll-x-contain touch-pan-x [-webkit-overflow-scrolling:touch] border-b border-gray-200 scrollbar-hide">
           {tabs.map((tab) => (
             <button
               key={tab.id}
@@ -741,8 +741,8 @@ export function SellerOrders() {
 
       {/* Orders Table */}
       <div className="bg-white border-x border-b border-gray-200 rounded-b-xl overflow-hidden shadow-sm">
-        <div className="overflow-x-auto relative z-10 min-h-[300px]">
-          <table className="w-full text-left border-collapse">
+        <div className="-mx-4 overflow-x-auto overscroll-x-contain touch-pan-x [-webkit-overflow-scrolling:touch] px-4 sm:mx-0 sm:px-0 relative z-10 min-h-[300px]">
+          <table className="w-full min-w-[900px] text-left border-collapse">
             <thead>
               <tr className="bg-gray-50 border-b border-gray-200">
                 <th className="p-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">
@@ -840,7 +840,7 @@ export function SellerOrders() {
                       </div>
                     </td>
                     <td className="p-4 text-right">
-                      <div className="flex items-center justify-end space-x-2">
+                      <div className="flex flex-wrap items-center justify-end gap-2">
                         {(user?.role === "seller"
                           ? order.orderStatus !== "cancelled"
                           : !(
@@ -966,7 +966,7 @@ export function SellerOrders() {
 
         {/* Pagination */}
         {!loading && orders.length > 0 && (
-          <div className="relative z-0 px-4 py-3 border-t border-gray-200 flex items-center justify-between bg-gray-50">
+          <div className="relative z-0 flex flex-col gap-3 border-t border-gray-200 bg-gray-50 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-sm text-gray-500">
               Hiển thị từ{" "}
               <span className="font-medium text-gray-900">
@@ -980,7 +980,7 @@ export function SellerOrders() {
               <span className="font-medium text-gray-900">{totalOrders}</span>{" "}
               kết quả
             </p>
-            <div className="flex items-center space-x-2">
+            <div className="flex flex-wrap items-center justify-center gap-2 sm:justify-end">
               <button
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={page === 1}
@@ -1107,7 +1107,7 @@ export function SellerOrders() {
                   Danh sách sản phẩm
                 </h3>
                 <div className="border border-gray-200 rounded-lg overflow-hidden">
-                  <table className="w-full text-sm text-left">
+                  <table className="w-full min-w-[720px] text-sm text-left">
                     <thead className="bg-gray-50 border-b border-gray-200 text-gray-500">
                       <tr>
                         <th className="px-4 py-3 font-medium">Sản phẩm</th>
@@ -1369,8 +1369,8 @@ export function SellerOrders() {
                   </div>
 
                   <div className="border border-gray-200 rounded-xl overflow-hidden">
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-sm text-left">
+                    <div className="-mx-4 overflow-x-auto overscroll-x-contain touch-pan-x [-webkit-overflow-scrolling:touch] px-4 sm:mx-0 sm:px-0">
+                      <table className="w-full min-w-[720px] text-sm text-left">
                         <thead className="bg-gray-50 text-gray-500 border-b border-gray-200">
                           <tr>
                             <th className="px-3 py-2 font-semibold">STT</th>

@@ -116,7 +116,7 @@ export function SellerReviews() {
 
       {/* Tabs */}
       <div className="bg-white border border-gray-200 rounded-t-xl overflow-hidden">
-        <div className="flex overflow-x-auto border-b border-gray-200 scrollbar-hide">
+        <div className="flex overflow-x-auto overscroll-x-contain touch-pan-x [-webkit-overflow-scrolling:touch] border-b border-gray-200 scrollbar-hide">
           {tabs.map((tab) =>
           <button
             key={tab.id}
